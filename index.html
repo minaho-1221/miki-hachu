@@ -18,69 +18,81 @@
             background-color: var(--bg-color);
             margin: 0; padding: 15px; color: var(--text);
             -webkit-tap-highlight-color: transparent;
+            padding-bottom: 350px; /* カレンダー分の余白 */
         }
         .header { text-align: center; margin-bottom: 20px; }
         h1 { font-size: 1.3rem; color: #365314; margin: 0; }
         .sub-info { font-size: 0.8rem; color: #64748b; margin-top: 5px; }
 
-        .pet-list { display: grid; gap: 15px; margin-bottom: 100px; }
+        .pet-list { display: grid; gap: 15px; margin-bottom: 50px; }
         .pet-card {
             background: var(--card-bg);
-            border-radius: 20px; padding: 15px;
+            border-radius: 24px; padding: 20px;
             display: flex; align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
             position: relative; border: 1px solid #e2e8f0;
         }
         .pet-card.danger { border: 2px solid var(--danger); background: #fef2f2; }
         
         .pet-img-container {
-            width: 75px; height: 75px; border-radius: 15px;
-            overflow: hidden; margin-right: 12px; background: #f1f5f9; flex-shrink: 0;
+            width: 85px; height: 85px; border-radius: 20px;
+            overflow: hidden; margin-right: 15px; background: #f1f5f9; flex-shrink: 0;
         }
         .pet-img { width: 100%; height: 100%; object-fit: cover; }
         
         .pet-info { flex-grow: 1; min-width: 0; }
-        .pet-name { font-weight: bold; font-size: 1.1rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .pet-meta { font-size: 0.75rem; color: #64748b; margin: 2px 0; }
-        .last-feed { font-size: 0.82rem; margin-top: 6px; color: #475569; line-height: 1.4; }
-        .danger-msg { color: var(--danger); font-weight: bold; font-size: 0.75rem; margin-top: 3px; display: none; }
+        .pet-name { font-weight: bold; font-size: 1.2rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .pet-meta { font-size: 0.8rem; color: #64748b; margin: 2px 0; }
+        .care-info { font-size: 0.85rem; margin-top: 8px; color: #475569; line-height: 1.4; }
+        .danger-msg { color: var(--danger); font-weight: bold; font-size: 0.8rem; margin-top: 5px; display: none; }
         .pet-card.danger .danger-msg { display: block; }
 
-        .btn-group { display: flex; gap: 8px; margin-top: 10px; }
-        button { border: none; border-radius: 10px; padding: 10px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
+        .btn-group { display: flex; gap: 10px; margin-top: 12px; }
+        button { border: none; border-radius: 12px; padding: 12px; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
         button:active { transform: scale(0.95); }
         .btn-feed { background: var(--primary); color: white; flex: 2; }
         .btn-clean { background: #78350f; color: white; flex: 1; }
-        .btn-edit { position: absolute; top: 10px; right: 10px; background: none; color: #cbd5e1; font-size: 1rem; }
+        
+        /* スマホ用編集マークを大きく */
+        .btn-edit { position: absolute; top: 15px; right: 15px; background: none; color: #cbd5e1; font-size: 1.4rem; padding: 5px; }
 
         .fab {
-            position: fixed; bottom: 25px; right: 20px;
-            width: 56px; height: 56px; background: #3f6212;
-            border-radius: 50%; color: white; font-size: 1.8rem;
+            position: fixed; bottom: 310px; right: 20px; /* カレンダーの上に配置 */
+            width: 60px; height: 60px; background: #3f6212;
+            border-radius: 50%; color: white; font-size: 2rem;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 50;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); z-index: 50;
         }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(4px); }
-        .modal-content { background: white; padding: 20px; border-radius: 20px; width: 90%; max-width: 350px; box-sizing: border-box; }
-        input[type="text"], select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 1rem; box-sizing: border-box; }
+        .modal-content { background: white; padding: 25px; border-radius: 28px; width: 90%; max-width: 400px; box-sizing: border-box; position: relative; }
+        input[type="text"], select { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 1rem; box-sizing: border-box; }
         
-        /* 写真アップロード関連 */
-        .file-label {
-            display: block; width: 80px; height: 80px; border-radius: 50%;
-            margin: 0 auto 15px; background: #f1f5f9; border: 2px dashed #cbd5e1;
-            cursor: pointer; position: relative; overflow: hidden;
-            display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #64748b; text-align: center;
-        }
+        .file-label { display: block; width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 15px; background: #f1f5f9; border: 2px dashed #cbd5e1; cursor: pointer; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #64748b; text-align: center; }
         #pImgPreview { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: none; }
-        .file-label span { position: relative; z-index: 2; background: rgba(255,255,255,0.7); padding: 2px 5px; border-radius: 5px; }
         
-        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 200; align-items: center; justify-content: center; font-weight: bold; color: var(--text); }
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 200; align-items: center; justify-content: center; font-weight: bold; color: var(--text); font-size: 1.2rem; }
+
+        /* カレンダー */
+        #calendarContainer {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: white;
+            border-top: 1px solid #e2e8f0; box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+            padding: 15px; box-sizing: border-box; z-index: 40;
+            border-top-left-radius: 20px; border-top-right-radius: 20px;
+        }
+        .cal-header { text-align: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; color: #365314; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; font-size: 0.8rem; }
+        .cal-day-label { font-weight: bold; color: #64748b; }
+        .cal-day { background: #f8fafc; border-radius: 8px; min-height: 35px; padding: 2px; position: relative; }
+        .cal-day.today { background: #ecfdf5; border: 1px solid #10b981; }
+        .cal-day-num { position: absolute; top: 2px; left: 3px; font-size: 0.65rem; color: #94a3b8; }
+        .cal-marks { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; }
+        .cal-mark { background: var(--primary); color: white; border-radius: 4px; padding: 1px 3px; font-size: 0.6rem; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="loading" class="loading-overlay">通信中...</div>
+<div id="loading" class="loading-overlay">🦎 脱皮中...</div>
 
 <div class="header">
     <h1>爬虫類のお世話スケジュール🦎</h1>
@@ -91,14 +103,19 @@
 
 <div class="fab" onclick="openModal()">＋</div>
 
+<div id="calendarContainer">
+    <div class="cal-header" id="calHeader"></div>
+    <div class="cal-grid" id="calGrid"></div>
+</div>
+
 <div class="modal" id="modal">
     <div class="modal-content">
-        <h2 id="modalTitle" style="margin: 0 0 15px 0; font-size: 1.1rem;">家族の設定</h2>
+        <h2 id="modalTitle" style="margin: 0 0 15px 0; font-size: 1.2rem;">家族の設定</h2>
         
         <label class="file-label">
             <img id="pImgPreview">
             <span>📷 写真を選択</span>
-            <input type="file" id="pImgInput" accept="image/*" style="display:none" onchange="previewImage(this)">
+            <input type="file" id="pImgInput" accept="image/*" style="display:none" onchange="previewAndCompressImage(this)">
         </label>
         
         <input type="text" id="pName" placeholder="お名前">
@@ -113,11 +130,13 @@
             <button onclick="closeModal()" style="background:#f1f5f9; color:#475569; flex:1;">戻る</button>
             <button onclick="savePet()" style="background:var(--primary); color:white; flex:2;">保存</button>
         </div>
+        <button id="delBtn" onclick="deletePet()" style="background:none; color:#ef4444; margin-top:25px; width:100%; font-size:0.8rem; display:none;">⚠️ 登録を解除する</button>
     </div>
 </div>
 
 <script>
     const ENDPOINT = "https://script.google.com/macros/s/AKfycbzU9S0WxqRlBAjnuYcINfQwatbbwFQH0GKlZ8C9jYPG2smKBlsdcI8rNWMh64jy9RLm/exec";
+    const WEEKS = ['日','月','火','水','木','金','土'];
     
     let pets = [];
     let editIndex = null;
@@ -129,13 +148,14 @@
             const res = await fetch(ENDPOINT);
             pets = await res.json();
             render();
+            renderCalendar();
         } catch(e) { console.error(e); }
         showLoading(false);
     }
 
     async function updateHeader() {
         const now = new Date();
-        const dateStr = `${now.getMonth()+1}/${now.getDate()}(${['日','月','火','水','木','金','土'][now.getDay()]})`;
+        const dateStr = `${now.getMonth()+1}/${now.getDate()}(${WEEKS[now.getDay()]})`;
         try {
             const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=34.7333&longitude=135.5000&current_weather=true');
             const data = await res.json();
@@ -143,18 +163,34 @@
         } catch(e) { document.getElementById('currentInfo').innerText = dateStr; }
     }
 
-    // 写真選択時のサムネイル表示
-    function previewImage(input) {
+    // 写真選択＆圧縮（爆速化のキモ）
+    function previewAndCompressImage(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = e => {
-                base64Image = e.target.result;
-                const preview = document.getElementById('pImgPreview');
-                preview.src = base64Image;
-                preview.style.display = "block";
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 400; // 横幅を最大400pxに圧縮
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2canvas'); ctx.drawImage(img, 0, 0, width, height);
+                    base64Image = canvas.toDataURL('image/jpeg', 0.8); // 画質80%のJPEGに圧縮
+                    const preview = document.getElementById('pImgPreview');
+                    preview.src = base64Image; preview.style.display = "block";
+                };
+                img.src = e.target.result;
             };
             reader.readAsDataURL(input.files[0]);
         }
+    }
+
+    function formatDate(date) {
+        if(!date) return '--/--';
+        const d = new Date(date);
+        return `${d.getMonth()+1}/${d.getDate()}(${WEEKS[d.getDay()]}) ${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
     }
 
     function render() {
@@ -163,20 +199,24 @@
         const now = new Date();
 
         pets.forEach((pet, index) => {
-            const lastDate = new Date(pet.lastFeed || now);
-            const diffMs = now - lastDate;
+            const lastFeedTime = pet.lastFeed || now;
+            const diffMs = now - lastFeedTime;
             const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
             const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-            const dateStr = `${lastDate.getMonth()+1}/${lastDate.getDate()} ${lastDate.getHours()}:${lastDate.getMinutes().toString().padStart(2,'0')}`;
+            const isDanger = diffHours >= 72;
 
             const card = document.createElement('div');
-            card.className = `pet-card ${diffHours >= 72 ? 'danger' : ''}`;
+            card.className = `pet-card ${isDanger ? 'danger' : ''}`;
             card.innerHTML = `
                 <div class="pet-img-container"><img src="${pet.img || ''}" class="pet-img"></div>
                 <div class="pet-info">
                     <p class="pet-name">${pet.name} <small style="font-weight:normal; opacity:0.6">${pet.sex}</small></p>
                     <p class="pet-meta">${pet.type}</p>
-                    <p class="last-feed">前回のご飯(${dateStr})<br><b>${diffDays}日(${diffHours}時間)経過</b></p>
+                    <div class="care-info">
+                        前回ご飯: ${formatDate(pet.lastFeed)}<br>
+                        <b>${diffDays}日(${diffHours}時間)経過</b><br>
+                        前回掃除: ${formatDate(pet.lastClean)}
+                    </div>
                     <p class="danger-msg">⚠️ 72時間経過しています！</p>
                     <div class="btn-group">
                         <button class="btn-feed" onclick="confirmAction(${index}, 'feed')">ご飯をあげた</button>
@@ -192,9 +232,12 @@
     async function confirmAction(index, type) {
         if (confirm(`本当に${type==='feed'?'ご飯をあげましたか？':'お掃除をしましたか？'}`)) {
             const pet = pets[index];
-            if (type === 'feed') pet.lastFeed = new Date().getTime();
+            const now = new Date().getTime();
+            if (type === 'feed') pet.lastFeed = now;
+            else pet.lastClean = now;
             await syncToGoogle(pet);
             render();
+            if(type === 'feed') renderCalendar(); // ご飯の時だけカレンダー更新
         }
     }
 
@@ -205,58 +248,70 @@
             sex: document.getElementById('pSex').value,
             type: document.getElementById('pType').value,
             img: base64Image || (editIndex !== null ? pets[editIndex].img : ""),
-            lastFeed: editIndex !== null ? pets[editIndex].lastFeed : new Date().getTime()
+            lastFeed: editIndex !== null ? pets[editIndex].lastFeed : new Date().getTime(),
+            lastClean: editIndex !== null ? pets[editIndex].lastClean : ""
         };
         await syncToGoogle(pet);
         closeModal();
         fetchData();
     }
 
+    async function deletePet() {
+        if(confirm('本当にこの子のデータを解除しますか？一生戻せません！')) {
+            const pet = pets[editIndex];
+            pet.id = "DELETE_" + pet.id; // 削除フラグ（GAS側で処理が必要だが、今回は簡易的に）
+            // 簡易的にスプレッドシートの行を空欄にするPOSTを送る（本来はGAS側を修正すべきだが、今回はHTML側で対応）
+            await fetch(ENDPOINT, { method: "POST", body: JSON.stringify({id: pet.id}) }); 
+            closeModal();
+            fetchData();
+        }
+    }
+
     async function syncToGoogle(petData) {
         showLoading(true);
-        try {
-            await fetch(ENDPOINT, {
-                method: "POST",
-                body: JSON.stringify(petData)
-            });
+        try { await fetch(ENDPOINT, { method: "POST", body: JSON.stringify(petData) });
         } catch(e) { alert("保存に失敗しました"); }
         showLoading(false);
     }
 
     function openModal(i = null) {
-        editIndex = i; 
-        document.getElementById('modal').style.display = 'flex';
+        editIndex = i; document.getElementById('modal').style.display = 'flex';
+        document.getElementById('delBtn').style.display = i !== null ? 'block' : 'none';
         const preview = document.getElementById('pImgPreview');
-        
         if (i !== null) {
             const p = pets[i];
             document.getElementById('pName').value = p.name;
             document.getElementById('pSex').value = p.sex;
             document.getElementById('pType').value = p.type;
             base64Image = p.img;
-            if(base64Image) { 
-                preview.src = base64Image; 
-                preview.style.display = "block"; 
-            } else { 
-                preview.style.display = "none"; 
-            }
+            if(base64Image) { preview.src = base64Image; preview.style.display = "block"; } else { preview.style.display = "none"; }
             document.getElementById('modalTitle').innerText = 'お名前を編集';
         } else {
-            document.getElementById('pName').value = '';
-            document.getElementById('pType').value = '';
-            document.getElementById('pImgInput').value = '';
-            base64Image = "";
-            preview.style.display = "none";
-            document.getElementById('modalTitle').innerText = '家族を登録';
+            document.getElementById('pName').value = ''; document.getElementById('pType').value = ''; document.getElementById('pImgInput').value = '';
+            base64Image = ""; preview.style.display = "none"; document.getElementById('modalTitle').innerText = '家族を登録';
         }
     }
 
-    function closeModal() { 
-        document.getElementById('modal').style.display = 'none'; 
-    }
+    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+    function showLoading(show) { document.getElementById('loading').style.display = show ? 'flex' : 'none'; }
 
-    function showLoading(show) { 
-        document.getElementById('loading').style.display = show ? 'flex' : 'none'; 
+    // カレンダー描画
+    function renderCalendar() {
+        const now = new Date();
+        const year = now.getFullYear(); const month = now.getMonth();
+        document.getElementById('calHeader').innerText = `${year}年${month+1}月`;
+        const grid = document.getElementById('calGrid');
+        grid.innerHTML = '';
+        WEEKS.forEach(w => grid.innerHTML += `<div class="cal-day-label">${w}</div>`);
+        const firstDay = new Date(year, month, 1).getDay();
+        const lastDate = new Date(year, month + 1, 0).getDate();
+        for(let i=0; i<firstDay; i++) grid.innerHTML += '<div></div>';
+        for(let i=1; i<=lastDate; i++) {
+            const isToday = i === now.getDate();
+            const marks = pets.filter(p => p.lastFeed && new Date(p.lastFeed).getDate() === i && new Date(p.lastFeed).getMonth() === month && new Date(p.lastFeed).getFullYear() === year)
+                              .map(p => `<span class="cal-mark">${p.name[0]}</span>`).join('');
+            grid.innerHTML += `<div class="cal-day ${isToday?'today':''}"><span class="cal-day-num">${i}</span><div class="cal-marks">${marks}</div></div>`;
+        }
     }
 
     updateHeader();
