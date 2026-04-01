@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Reptile Care Manager</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --primary: #4caf50;
+            --danger: #ff5252;
+            --text: #333;
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0; padding: 20px; color: var(--text);
+            -webkit-tap-highlight-color: transparent;
+        }
+        h1 { text-align: center; font-size: 1.5rem; color: #2e7d32; margin-bottom: 20px; }
+        
+        /* リスト表示 */
+        .pet-list { display: grid; gap: 15px; margin-bottom: 80px; }
+        .pet-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            position: relative;
+            transition: 0.3s;
+        }
+        .pet-card.danger { border: 2px solid var(--danger); background: #fff5f5; }
+        
+        .pet-img {
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #ddd;
+            margin-right: 15px;
+        }
+        .pet-info { flex-grow: 1; }
+        .pet-name { font-weight: bold; font-size: 1.1rem; margin: 0; }
+        .pet-meta { font-size: 0.8rem; color: #777; margin: 2px 0; }
+        .last-feed { font-size: 0.85rem; font-weight: bold; margin-top: 5px; }
+        .status-badge {
+            font-size: 0.7rem; padding: 2px 8px; border-radius: 10px;
+            background: #eee; display: inline-block; margin-top: 5px;
+        }
+        .danger-msg { color: var(--danger); font-weight: bold; display: none; }
+        .pet-card.danger .danger-msg { display: block; }
+        .pet-card.danger .status-badge { display: none; }
+
+        /* ボタン類 */
+        .btn-group { display: flex; gap: 8px; margin-top: 10px; }
+        button {
+            border: none; border-radius: 10px; padding: 10px 15px;
+            font-size: 0.85rem; font-weight: bold; cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-feed { background: var(--primary); color: white; flex: 2; }
+        .btn-clean { background: #8d6e63; color: white; flex: 1; }
+        .btn-edit { position: absolute; top: 15px; right: 15px; background: none; color: #ccc; padding: 5px; }
+
+        /* フローティング追加ボタン */
+        .fab {
+            position: fixed; bottom: 20px; right: 20px;
+            width: 60px; height: 60px; background: #2e7d32;
+            border-radius: 50%; color: white; font-size: 2rem;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        /* モーダル */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 100;
+        }
+        .modal-content {
+            background: white; padding: 25px; border-radius: 25px; width: 85%; max-width: 400px;
+        }
+        input, select {
+            width: 100%; padding: 12px; margin: 10px 0;
+            border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+<h1>爬虫類ごはん日記 🦎</h1>
+
+<div class="pet-list" id="petList">
+    </div>
+
+<div class="fab" onclick="openModal()">＋</div>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h2 id="modalTitle">新しい家族を登録</h2>
+        <input type="text" id="pName" placeholder="名前">
+        <select id="pSex">
+            <option value="不明">性別：不明</option>
+            <option value="♂">♂（オス）</option>
+            <option value="♀">♀（メス）</option>
+        </select>
+        <input type="text" id="pType" placeholder="種別（例：ヒョウモントカゲモドキ）">
+        <input type="text" id="pImg" placeholder="写真URL（空欄でデフォルト）">
+        <div class="btn-group">
+            <button onclick="closeModal()" style="background:#eee; color:#333;">キャンセル</button>
+            <button onclick="savePet()" style="background:var(--primary); color:white;">保存する</button>
+        </div>
+        <button id="delBtn" onclick="deletePet()" style="background:none; color:red; margin-top:15px; width:100%; display:none;">登録を解除する</button>
+    </div>
+</div>
+
+<script>
+    let pets = JSON.parse(localStorage.getItem('myPets')) || [];
+    let editIndex = null;
+
+    function render() {
+        const list = document.getElementById('petList');
+        list.innerHTML = '';
+        const now = new Date().getTime();
+
+        pets.forEach((pet, index) => {
+            const lastFeedTime = pet.lastFeed || now;
+            const diffHours = Math.floor((now - lastFeedTime) / (1000 * 60 * 60));
+            const isDanger = diffHours >= 72;
+
+            const card = document.createElement('div');
+            card.className = `pet-card ${isDanger ? 'danger' : ''}`;
+            card.innerHTML = `
+                <img src="${pet.img || 'https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=200'}" class="pet-img">
+                <div class="pet-info">
+                    <p class="pet-name">${pet.name} ${pet.sex}</p>
+                    <p class="pet-meta">${pet.type}</p>
+                    <p class="last-feed">前回から: ${diffHours}時間</p>
+                    <span class="status-badge">お腹いっぱい</span>
+                    <span class="danger-msg">⚠️ 72時間経過！ごはん！</span>
+                    <div class="btn-group">
+                        <button class="btn-feed" onclick="confirmAction(${index}, 'feed')">ごはんをあげた</button>
+                        <button class="btn-clean" onclick="confirmAction(${index}, 'clean')">掃除</button>
+                    </div>
+                </div>
+                <button class="btn-edit" onclick="openModal(${index})">✎</button>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    function confirmAction(index, type) {
+        const actionName = type === 'feed' ? 'ごはんをあげましたか？' : '掃除をしましたか？';
+        if (confirm(actionName)) {
+            if (type === 'feed') pets[index].lastFeed = new Date().getTime();
+            saveToLocal();
+            render();
+        }
+    }
+
+    function openModal(index = null) {
+        editIndex = index;
+        document.getElementById('modal').style.display = 'flex';
+        document.getElementById('delBtn').style.display = index !== null ? 'block' : 'none';
+        if (index !== null) {
+            const p = pets[index];
+            document.getElementById('pName').value = p.name;
+            document.getElementById('pSex').value = p.sex;
+            document.getElementById('pType').value = p.type;
+            document.getElementById('pImg').value = p.img || '';
+            document.getElementById('modalTitle').innerText = '情報を編集';
+        } else {
+            resetModal();
+        }
+    }
+
+    function savePet() {
+        const newPet = {
+            name: document.getElementById('pName').value || 'ななし',
+            sex: document.getElementById('pSex').value,
+            type: document.getElementById('pType').value || '爬虫類',
+            img: document.getElementById('pImg').value,
+            lastFeed: editIndex !== null ? pets[editIndex].lastFeed : new Date().getTime()
+        };
+        if (editIndex !== null) pets[editIndex] = newPet;
+        else pets.push(newPet);
+        saveToLocal();
+        closeModal();
+        render();
+    }
+
+    function deletePet() {
+        if(confirm('この子のデータを消してもいい？')) {
+            pets.splice(editIndex, 1);
+            saveToLocal();
+            closeModal();
+            render();
+        }
+    }
+
+    function saveToLocal() { localStorage.setItem('myPets', JSON.stringify(pets)); }
+    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+    function resetModal() {
+        document.getElementById('pName').value = '';
+        document.getElementById('pType').value = '';
+        document.getElementById('pImg').value = '';
+        document.getElementById('modalTitle').innerText = '新しい家族を登録';
+    }
+
+    render();
+</script>
+</body>
+</html>
