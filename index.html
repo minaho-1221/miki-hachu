@@ -40,14 +40,15 @@
         .pet-img { width: 100%; height: 100%; object-fit: cover; }
         
         .pet-info { flex-grow: 1; min-width: 0; }
-        .pet-name { font-weight: bold; font-size: 1.1rem; margin: 0; }
+        .pet-name { font-weight: bold; font-size: 1.1rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .pet-meta { font-size: 0.75rem; color: #64748b; margin: 2px 0; }
         .last-feed { font-size: 0.82rem; margin-top: 6px; color: #475569; line-height: 1.4; }
         .danger-msg { color: var(--danger); font-weight: bold; font-size: 0.75rem; margin-top: 3px; display: none; }
         .pet-card.danger .danger-msg { display: block; }
 
         .btn-group { display: flex; gap: 8px; margin-top: 10px; }
-        button { border: none; border-radius: 10px; padding: 10px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+        button { border: none; border-radius: 10px; padding: 10px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
+        button:active { transform: scale(0.95); }
         .btn-feed { background: var(--primary); color: white; flex: 2; }
         .btn-clean { background: #78350f; color: white; flex: 1; }
         .btn-edit { position: absolute; top: 10px; right: 10px; background: none; color: #cbd5e1; font-size: 1rem; }
@@ -60,11 +61,21 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 50;
         }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 100; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(4px); }
         .modal-content { background: white; padding: 20px; border-radius: 20px; width: 90%; max-width: 350px; box-sizing: border-box; }
         input[type="text"], select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 1rem; box-sizing: border-box; }
         
-        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 200; align-items: center; justify-content: center; font-weight: bold; }
+        /* 写真アップロード関連 */
+        .file-label {
+            display: block; width: 80px; height: 80px; border-radius: 50%;
+            margin: 0 auto 15px; background: #f1f5f9; border: 2px dashed #cbd5e1;
+            cursor: pointer; position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #64748b; text-align: center;
+        }
+        #pImgPreview { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: none; }
+        .file-label span { position: relative; z-index: 2; background: rgba(255,255,255,0.7); padding: 2px 5px; border-radius: 5px; }
+        
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 200; align-items: center; justify-content: center; font-weight: bold; color: var(--text); }
     </style>
 </head>
 <body>
@@ -83,24 +94,29 @@
 <div class="modal" id="modal">
     <div class="modal-content">
         <h2 id="modalTitle" style="margin: 0 0 15px 0; font-size: 1.1rem;">家族の設定</h2>
-        <label style="display:block; text-align:center; background:#f1f5f9; padding:10px; border-radius:10px; margin-bottom:10px; font-size:0.8rem; border:1px dashed #ccc;">
+        
+        <label class="file-label">
+            <img id="pImgPreview">
+            <span>📷 写真を選択</span>
             <input type="file" id="pImgInput" accept="image/*" style="display:none" onchange="previewImage(this)">
-            📷 写真を選択
         </label>
+        
         <input type="text" id="pName" placeholder="お名前">
         <select id="pSex">
-            <option value="不明">性別：不明</option><option value="♂">♂</option><option value="♀">♀</option>
+            <option value="不明">性別：不明</option>
+            <option value="♂（オス）">♂（オス）</option>
+            <option value="♀（メス）">♀（メス）</option>
         </select>
         <input type="text" id="pType" placeholder="種別：例 カメカブトトカゲ">
+        
         <div class="btn-group">
-            <button onclick="closeModal()" style="background:#eee; flex:1;">戻る</button>
+            <button onclick="closeModal()" style="background:#f1f5f9; color:#475569; flex:1;">戻る</button>
             <button onclick="savePet()" style="background:var(--primary); color:white; flex:2;">保存</button>
         </div>
     </div>
 </div>
 
 <script>
-    // ★ここに取得したURLが入っています
     const ENDPOINT = "https://script.google.com/macros/s/AKfycbx_4Yp7tYb65cYwxLh1e8WdNQShnIeiS8rxErzr96z9Lo5-sH9JGQ3WPAI5ig_9I07a/exec";
     
     let pets = [];
@@ -127,12 +143,15 @@
         } catch(e) { document.getElementById('currentInfo').innerText = dateStr; }
     }
 
+    // 写真選択時のサムネイル表示
     function previewImage(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = e => {
                 base64Image = e.target.result;
-                alert("写真を読み込みました");
+                const preview = document.getElementById('pImgPreview');
+                preview.src = base64Image;
+                preview.style.display = "block";
             };
             reader.readAsDataURL(input.files[0]);
         }
@@ -155,10 +174,10 @@
             card.innerHTML = `
                 <div class="pet-img-container"><img src="${pet.img || ''}" class="pet-img"></div>
                 <div class="pet-info">
-                    <p class="pet-name">${pet.name} <small>${pet.sex}</small></p>
+                    <p class="pet-name">${pet.name} <small style="font-weight:normal; opacity:0.6">${pet.sex}</small></p>
                     <p class="pet-meta">${pet.type}</p>
                     <p class="last-feed">前回のご飯(${dateStr})<br><b>${diffDays}日(${diffHours}時間)経過</b></p>
-                    <p class="danger-msg">⚠️ 72時間経過！</p>
+                    <p class="danger-msg">⚠️ 72時間経過しています！</p>
                     <div class="btn-group">
                         <button class="btn-feed" onclick="confirmAction(${index}, 'feed')">ご飯をあげた</button>
                         <button class="btn-clean" onclick="confirmAction(${index}, 'clean')">掃除</button>
@@ -206,23 +225,15 @@
 
     function openModal(i = null) {
         editIndex = i; document.getElementById('modal').style.display = 'flex';
+        const preview = document.getElementById('pImgPreview');
+        
         if (i !== null) {
-            document.getElementById('pName').value = pets[i].name;
-            document.getElementById('pSex').value = pets[i].sex;
-            document.getElementById('pType').value = pets[i].type;
-            base64Image = pets[i].img;
+            const p = pets[i];
+            document.getElementById('pName').value = p.name;
+            document.getElementById('pSex').value = p.sex;
+            document.getElementById('pType').value = p.type;
+            base64Image = p.img;
+            if(base64Image) { preview.src = base64Image; preview.style.display = "block"; } else { preview.style.display = "none"; }
+            document.getElementById('modalTitle').innerText = 'お名前を編集';
         } else {
-            document.getElementById('pName').value = '';
-            document.getElementById('pType').value = '';
-            base64Image = "";
-        }
-    }
-
-    function closeModal() { document.getElementById('modal').style.display = 'none'; }
-    function showLoading(show) { document.getElementById('loading').style.display = show ? 'flex' : 'none'; }
-
-    updateHeader();
-    fetchData();
-</script>
-</body>
-</html>
+            document.getElementById('p
