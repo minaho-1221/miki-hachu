@@ -10,6 +10,7 @@
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
             --primary: #65a30d;
+            --clean-color: #78350f;
             --danger: #ef4444;
             --text: #1e293b;
         }
@@ -56,9 +57,9 @@
         button { border: none; border-radius: 12px; padding: 10px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
         button:active { transform: scale(0.95); }
         .btn-feed { background: var(--primary); color: white; flex: 2; }
-        .btn-clean { background: #78350f; color: white; flex: 1.2; }
+        .btn-clean { background: var(--clean-color); color: white; flex: 1.2; }
         
-        .btn-edit { position: absolute; top: 12px; right: 12px; background: none; color: #cbd5e1; font-size: 1.5rem; padding: 5px; line-height: 1; }
+        .btn-edit { position: absolute; top: 10px; right: 10px; background: none; color: #cbd5e1; font-size: 1.6rem; padding: 5px; line-height: 1; }
 
         .fab {
             position: fixed; bottom: 25px; right: 20px;
@@ -77,26 +78,28 @@
         
         .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 200; align-items: center; justify-content: center; font-weight: bold; color: #365314; font-size: 1.2rem; }
 
-        /* カレンダー（ページ最下部へ） */
+        /* カレンダー */
         #calendarContainer {
-            margin-top: 40px; margin-bottom: 100px;
+            margin-top: 40px; margin-bottom: 120px;
             background: white; border-radius: 24px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            padding: 20px; border: 1px solid #e2e8f0;
+            padding: 15px; border: 1px solid #e2e8f0;
         }
-        .cal-header { text-align: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; color: #365314; }
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
-        .cal-day-label { font-size: 0.75rem; font-weight: bold; color: #64748b; padding-bottom: 8px; }
-        .cal-day { background: #f8fafc; border-radius: 10px; min-height: 45px; padding: 4px; position: relative; border: 1px solid transparent; }
+        .cal-header { text-align: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 12px; color: #365314; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+        .cal-day-label { font-size: 0.7rem; font-weight: bold; color: #64748b; padding-bottom: 5px; }
+        .cal-day { background: #f8fafc; border-radius: 8px; min-height: 55px; padding: 2px; position: relative; border: 1px solid transparent; }
         .cal-day.today { background: #ecfdf5; border-color: #10b981; }
-        .cal-day-num { position: absolute; top: 3px; left: 4px; font-size: 0.65rem; color: #94a3b8; }
-        .cal-marks { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; }
-        .cal-mark { background: var(--primary); color: white; border-radius: 4px; padding: 1px 3px; font-size: 0.6rem; font-weight: bold; transform: scale(0.9); }
+        .cal-day-num { position: absolute; top: 2px; left: 3px; font-size: 0.6rem; color: #94a3b8; }
+        .cal-marks { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; max-height: 40px; overflow: hidden; }
+        .cal-mark { border-radius: 3px; padding: 0 2px; font-size: 0.55rem; font-weight: bold; color: white; display: inline-block; min-width: 12px; }
+        .mark-feed { background: var(--primary); }
+        .mark-clean { background: var(--clean-color); }
     </style>
 </head>
 <body>
 
-<div id="loading" class="loading-overlay">🦎 脱皮中...</div>
+<div id="loading" class="loading-overlay">🦎 ゆっくり脱皮中・・</div>
 
 <div class="header">
     <h1>爬虫類のお世話スケジュール🦎</h1>
@@ -223,7 +226,7 @@
                         <div class="care-item">🍚 <b>ご飯:</b> ${getElapsedText(pet.lastFeed)}</div>
                         <div class="care-item">✨ <b>掃除:</b> ${getElapsedText(pet.lastClean)}</div>
                     </div>
-                    <p class="danger-msg">⚠️ 72時間経過！ごはん！</p>
+                    <p class="danger-msg">⚠️ 72時間経過しています！</p>
                     <div class="btn-group">
                         <button class="btn-feed" onclick="confirmAction(${index}, 'feed')">ご飯をあげた</button>
                         <button class="btn-clean" onclick="confirmAction(${index}, 'clean')">掃除</button>
@@ -243,7 +246,7 @@
             else pet.lastClean = now;
             await syncToGoogle(pet);
             render();
-            if(type === 'feed') renderCalendar();
+            renderCalendar();
         }
     }
 
@@ -263,10 +266,17 @@
     }
 
     async function deletePet() {
-        if(confirm('この子のデータを消去しますか？スプレッドシートからも消えます。')) {
-            // 今回は簡略化のため、IDを空にして送るか、別途削除用GASを組む必要がありますが
-            // IDを特定の文字列にして送ることでGAS側で無視or削除させる運用にします。
-            alert("削除機能はメンテナンス中です。スプレッドシートから直接行を削除してください。");
+        if(confirm('この子のデータを消去しますか？スプレッドシートからも完全に消えます。')) {
+            showLoading(true);
+            try {
+                await fetch(ENDPOINT, {
+                    method: "POST",
+                    body: JSON.stringify({ action: 'DELETE', id: pets[editIndex].id })
+                });
+                closeModal();
+                fetchData();
+            } catch(e) { alert("削除に失敗しました"); }
+            showLoading(false);
         }
     }
 
@@ -288,10 +298,10 @@
             document.getElementById('pType').value = p.type;
             base64Image = p.img;
             if(base64Image) { preview.src = base64Image; preview.style.display = "block"; } else { preview.style.display = "none"; }
-            document.getElementById('modalTitle').innerText = '編集';
+            document.getElementById('modalTitle').innerText = 'お名前を編集';
         } else {
             document.getElementById('pName').value = ''; document.getElementById('pType').value = ''; document.getElementById('pImgInput').value = '';
-            base64Image = ""; preview.style.display = "none"; document.getElementById('modalTitle').innerText = '家族登録';
+            base64Image = ""; preview.style.display = "none"; document.getElementById('modalTitle').innerText = '家族を登録';
         }
     }
 
@@ -310,9 +320,24 @@
         for(let i=0; i<firstDay; i++) grid.innerHTML += '<div></div>';
         for(let i=1; i<=lastDate; i++) {
             const isToday = i === now.getDate();
-            const marks = pets.filter(p => p.lastFeed && new Date(p.lastFeed).getDate() === i && new Date(p.lastFeed).getMonth() === month && new Date(p.lastFeed).getFullYear() === year)
-                              .map(p => `<span class="cal-mark">${p.name[0]}</span>`).join('');
-            grid.innerHTML += `<div class="cal-day ${isToday?'today':''}"><span class="cal-day-num">${i}</span><div class="cal-marks">${marks}</div></div>`;
+            let marksHtml = "";
+            let count = 0;
+            pets.forEach(p => {
+                if(count >= 6) return;
+                const fDate = new Date(p.lastFeed);
+                const cDate = new Date(p.lastClean);
+                // ご飯マーク（緑）
+                if(p.lastFeed && fDate.getDate() === i && fDate.getMonth() === month && fDate.getFullYear() === year) {
+                    marksHtml += `<span class="cal-mark mark-feed">${p.name[0]}</span>`;
+                    count++;
+                }
+                // 掃除マーク（茶）
+                if(count < 6 && p.lastClean && cDate.getDate() === i && cDate.getMonth() === month && cDate.getFullYear() === year) {
+                    marksHtml += `<span class="cal-mark mark-clean">${p.name[0]}</span>`;
+                    count++;
+                }
+            });
+            grid.innerHTML += `<div class="cal-day ${isToday?'today':''}"><span class="cal-day-num">${i}</span><div class="cal-marks">${marksHtml}</div></div>`;
         }
     }
 
