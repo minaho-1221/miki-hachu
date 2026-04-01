@@ -16,89 +16,64 @@
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
             background-color: var(--bg-color);
-            margin: 0; padding: 20px; color: var(--text);
+            margin: 0; padding: 15px; color: var(--text);
             -webkit-tap-highlight-color: transparent;
         }
         .header { text-align: center; margin-bottom: 20px; }
-        h1 { font-size: 1.4rem; color: #365314; margin: 0; }
-        .sub-info { font-size: 0.85rem; color: #64748b; margin-top: 5px; }
+        h1 { font-size: 1.3rem; color: #365314; margin: 0; }
+        .sub-info { font-size: 0.8rem; color: #64748b; margin-top: 5px; }
 
         .pet-list { display: grid; gap: 15px; margin-bottom: 100px; }
         .pet-card {
             background: var(--card-bg);
-            border-radius: 24px;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            position: relative;
-            border: 1px solid #e2e8f0;
+            border-radius: 20px; padding: 15px;
+            display: flex; align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: relative; border: 1px solid #e2e8f0;
         }
         .pet-card.danger { border: 2px solid var(--danger); background: #fef2f2; }
         
         .pet-img-container {
-            width: 80px; height: 80px;
-            border-radius: 20px;
-            overflow: hidden;
-            margin-right: 15px;
-            background: #f1f5f9;
-            flex-shrink: 0;
+            width: 75px; height: 75px; border-radius: 15px;
+            overflow: hidden; margin-right: 12px; background: #f1f5f9; flex-shrink: 0;
         }
         .pet-img { width: 100%; height: 100%; object-fit: cover; }
         
-        .pet-info { flex-grow: 1; }
-        .pet-name { font-weight: bold; font-size: 1.2rem; margin: 0; display: flex; align-items: center; gap: 5px; }
-        .pet-meta { font-size: 0.8rem; color: #64748b; margin: 2px 0; }
-        .last-feed { font-size: 0.9rem; font-weight: 600; margin-top: 8px; color: #475569; }
-        .danger-msg { color: var(--danger); font-weight: bold; font-size: 0.8rem; margin-top: 5px; display: none; }
+        .pet-info { flex-grow: 1; min-width: 0; }
+        .pet-name { font-weight: bold; font-size: 1.1rem; margin: 0; }
+        .pet-meta { font-size: 0.75rem; color: #64748b; margin: 2px 0; }
+        .last-feed { font-size: 0.82rem; margin-top: 6px; color: #475569; line-height: 1.4; }
+        .danger-msg { color: var(--danger); font-weight: bold; font-size: 0.75rem; margin-top: 3px; display: none; }
         .pet-card.danger .danger-msg { display: block; }
 
-        .btn-group { display: flex; gap: 10px; margin-top: 12px; }
-        button {
-            border: none; border-radius: 12px; padding: 12px;
-            font-size: 0.85rem; font-weight: bold; cursor: pointer;
-            transition: transform 0.1s;
-        }
-        button:active { transform: scale(0.95); }
+        .btn-group { display: flex; gap: 8px; margin-top: 10px; }
+        button { border: none; border-radius: 10px; padding: 10px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
         .btn-feed { background: var(--primary); color: white; flex: 2; }
         .btn-clean { background: #78350f; color: white; flex: 1; }
-        .btn-edit { position: absolute; top: 15px; right: 15px; background: none; color: #cbd5e1; font-size: 1.2rem; }
+        .btn-edit { position: absolute; top: 10px; right: 10px; background: none; color: #cbd5e1; font-size: 1rem; }
 
         .fab {
-            position: fixed; bottom: 30px; right: 20px;
-            width: 64px; height: 64px; background: #3f6212;
-            border-radius: 50%; color: white; font-size: 2rem;
+            position: fixed; bottom: 25px; right: 20px;
+            width: 56px; height: 56px; background: #3f6212;
+            border-radius: 50%; color: white; font-size: 1.8rem;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
-            z-index: 50;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 50;
         }
 
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 100;
-            backdrop-filter: blur(4px);
-        }
-        .modal-content {
-            background: white; padding: 24px; border-radius: 28px; width: 90%; max-width: 400px;
-            box-sizing: border-box;
-        }
-        input, select {
-            width: 100%; padding: 14px; margin: 8px 0;
-            border: 1px solid #e2e8f0; border-radius: 12px; font-size: 1rem;
-        }
-        .file-label {
-            display: block; padding: 12px; background: #f1f5f9; border-radius: 12px;
-            text-align: center; font-size: 0.9rem; color: #475569; border: 2px dashed #cbd5e1;
-            margin: 10px 0; cursor: pointer;
-        }
-        #pImgPreview { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; display: none; margin: 0 auto 10px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 100; }
+        .modal-content { background: white; padding: 20px; border-radius: 20px; width: 90%; max-width: 350px; box-sizing: border-box; }
+        input[type="text"], select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 1rem; box-sizing: border-box; }
+        
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 200; align-items: center; justify-content: center; font-weight: bold; }
     </style>
 </head>
 <body>
 
+<div id="loading" class="loading-overlay">通信中...</div>
+
 <div class="header">
     <h1>爬虫類のお世話スケジュール🦎</h1>
-    <div class="sub-info" id="currentInfo">読み込み中...</div>
+    <div class="sub-info" id="currentInfo">...</div>
 </div>
 
 <div class="pet-list" id="petList"></div>
@@ -107,58 +82,57 @@
 
 <div class="modal" id="modal">
     <div class="modal-content">
-        <h2 id="modalTitle" style="margin-top:0; font-size: 1.3rem;">家族を登録</h2>
-        
-        <label class="file-label">
-            <img id="pImgPreview">
-            <span>📷 写真を選択</span>
+        <h2 id="modalTitle" style="margin: 0 0 15px 0; font-size: 1.1rem;">家族の設定</h2>
+        <label style="display:block; text-align:center; background:#f1f5f9; padding:10px; border-radius:10px; margin-bottom:10px; font-size:0.8rem; border:1px dashed #ccc;">
             <input type="file" id="pImgInput" accept="image/*" style="display:none" onchange="previewImage(this)">
+            📷 写真を選択
         </label>
-        
         <input type="text" id="pName" placeholder="お名前">
         <select id="pSex">
-            <option value="不明">性別：不明</option>
-            <option value="♂">♂（オス）</option>
-            <option value="♀">♀（メス）</option>
+            <option value="不明">性別：不明</option><option value="♂">♂</option><option value="♀">♀</option>
         </select>
         <input type="text" id="pType" placeholder="種別：例 カメカブトトカゲ">
-        
         <div class="btn-group">
-            <button onclick="closeModal()" style="background:#f1f5f9; color:#475569; flex:1;">戻る</button>
-            <button onclick="savePet()" style="background:var(--primary); color:white; flex:2;">保存する</button>
+            <button onclick="closeModal()" style="background:#eee; flex:1;">戻る</button>
+            <button onclick="savePet()" style="background:var(--primary); color:white; flex:2;">保存</button>
         </div>
-        <button id="delBtn" onclick="deletePet()" style="background:none; color:#ef4444; margin-top:20px; width:100%; font-size:0.8rem;">登録を解除する</button>
     </div>
 </div>
 
 <script>
-    let pets = JSON.parse(localStorage.getItem('myPetsV2')) || [];
+    // ★ここに取得したURLが入っています
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbx_4Yp7tYb65cYwxLh1e8WdNQShnIeiS8rxErzr96z9Lo5-sH9JGQ3WPAI5ig_9I07a/exec";
+    
+    let pets = [];
     let editIndex = null;
     let base64Image = "";
 
-    // 天気と日付の取得
+    async function fetchData() {
+        showLoading(true);
+        try {
+            const res = await fetch(ENDPOINT);
+            pets = await res.json();
+            render();
+        } catch(e) { console.error(e); }
+        showLoading(false);
+    }
+
     async function updateHeader() {
         const now = new Date();
-        const dateStr = `${now.getMonth()+1}月${now.getDate()}日(${['日','月','火','水','木','金','土'][now.getDay()]})`;
-        let tempStr = "気温取得中...";
-        
+        const dateStr = `${now.getMonth()+1}/${now.getDate()}(${['日','月','火','水','木','金','土'][now.getDay()]})`;
         try {
             const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=34.7333&longitude=135.5000&current_weather=true');
             const data = await res.json();
-            tempStr = `新大阪 ${Math.round(data.current_weather.temperature)}℃`;
-        } catch(e) { tempStr = "新大阪 --℃"; }
-        
-        document.getElementById('currentInfo').innerText = `${dateStr} / ${tempStr}`;
+            document.getElementById('currentInfo').innerText = `${dateStr} 新大阪:${Math.round(data.current_weather.temperature)}℃`;
+        } catch(e) { document.getElementById('currentInfo').innerText = dateStr; }
     }
 
     function previewImage(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = e => {
                 base64Image = e.target.result;
-                const preview = document.getElementById('pImgPreview');
-                preview.src = base64Image;
-                preview.style.display = "block";
+                alert("写真を読み込みました");
             };
             reader.readAsDataURL(input.files[0]);
         }
@@ -167,26 +141,24 @@
     function render() {
         const list = document.getElementById('petList');
         list.innerHTML = '';
-        const now = new Date().getTime();
+        const now = new Date();
 
         pets.forEach((pet, index) => {
-            const lastFeedTime = pet.lastFeed || now;
-            const diffMs = now - lastFeedTime;
+            const lastDate = new Date(pet.lastFeed || now);
+            const diffMs = now - lastDate;
             const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
             const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-            const isDanger = diffHours >= 72;
+            const dateStr = `${lastDate.getMonth()+1}/${lastDate.getDate()} ${lastDate.getHours()}:${lastDate.getMinutes().toString().padStart(2,'0')}`;
 
             const card = document.createElement('div');
-            card.className = `pet-card ${isDanger ? 'danger' : ''}`;
+            card.className = `pet-card ${diffHours >= 72 ? 'danger' : ''}`;
             card.innerHTML = `
-                <div class="pet-img-container">
-                    <img src="${pet.img || 'https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=200'}" class="pet-img">
-                </div>
+                <div class="pet-img-container"><img src="${pet.img || ''}" class="pet-img"></div>
                 <div class="pet-info">
-                    <p class="pet-name">${pet.name} <span style="font-size:0.9rem; font-weight:normal; opacity:0.6">${pet.sex}</span></p>
+                    <p class="pet-name">${pet.name} <small>${pet.sex}</small></p>
                     <p class="pet-meta">${pet.type}</p>
-                    <p class="last-feed">前回から${diffDays}日 <span style="font-size:0.8rem; font-weight:normal; opacity:0.7">(${diffHours}時間経過)</span></p>
-                    <p class="danger-msg">⚠️ 72時間経過しています！</p>
+                    <p class="last-feed">前回のご飯(${dateStr})<br><b>${diffDays}日(${diffHours}時間)経過</b></p>
+                    <p class="danger-msg">⚠️ 72時間経過！</p>
                     <div class="btn-group">
                         <button class="btn-feed" onclick="confirmAction(${index}, 'feed')">ご飯をあげた</button>
                         <button class="btn-clean" onclick="confirmAction(${index}, 'clean')">掃除</button>
@@ -198,72 +170,59 @@
         });
     }
 
-    function confirmAction(index, type) {
-        const msg = type === 'feed' ? '本当にご飯をあげましたか？' : '本当にお掃除をしましたか？';
-        if (confirm(msg)) {
-            if (type === 'feed') pets[index].lastFeed = new Date().getTime();
-            saveToLocal();
+    async function confirmAction(index, type) {
+        if (confirm(`本当に${type==='feed'?'ご飯をあげましたか？':'お掃除をしましたか？'}`)) {
+            const pet = pets[index];
+            if (type === 'feed') pet.lastFeed = new Date().getTime();
+            await syncToGoogle(pet);
             render();
         }
     }
 
-    function openModal(index = null) {
-        editIndex = index;
-        document.getElementById('modal').style.display = 'flex';
-        const preview = document.getElementById('pImgPreview');
-        
-        if (index !== null) {
-            const p = pets[index];
-            document.getElementById('pName').value = p.name;
-            document.getElementById('pSex').value = p.sex;
-            document.getElementById('pType').value = p.type;
-            base64Image = p.img || "";
-            if(base64Image) { preview.src = base64Image; preview.style.display = "block"; }
-            document.getElementById('modalTitle').innerText = 'お名前を編集';
-            document.getElementById('delBtn').style.display = 'block';
-        } else {
-            resetModal();
-        }
-    }
-
-    function savePet() {
-        const newPet = {
-            name: document.getElementById('pName').value || 'ななし',
+    async function savePet() {
+        const pet = {
+            id: editIndex !== null ? pets[editIndex].id : new Date().getTime().toString(),
+            name: document.getElementById('pName').value,
             sex: document.getElementById('pSex').value,
-            type: document.getElementById('pType').value || '爬虫類',
-            img: base64Image,
+            type: document.getElementById('pType').value,
+            img: base64Image || (editIndex !== null ? pets[editIndex].img : ""),
             lastFeed: editIndex !== null ? pets[editIndex].lastFeed : new Date().getTime()
         };
-        if (editIndex !== null) pets[editIndex] = newPet;
-        else pets.push(newPet);
-        saveToLocal();
+        await syncToGoogle(pet);
         closeModal();
-        render();
+        fetchData();
     }
 
-    function deletePet() {
-        if(confirm('この子のデータを消してもいいですか？')) {
-            pets.splice(editIndex, 1);
-            saveToLocal();
-            closeModal();
-            render();
+    async function syncToGoogle(petData) {
+        showLoading(true);
+        try {
+            await fetch(ENDPOINT, {
+                method: "POST",
+                body: JSON.stringify(petData)
+            });
+        } catch(e) { alert("保存に失敗しました"); }
+        showLoading(false);
+    }
+
+    function openModal(i = null) {
+        editIndex = i; document.getElementById('modal').style.display = 'flex';
+        if (i !== null) {
+            document.getElementById('pName').value = pets[i].name;
+            document.getElementById('pSex').value = pets[i].sex;
+            document.getElementById('pType').value = pets[i].type;
+            base64Image = pets[i].img;
+        } else {
+            document.getElementById('pName').value = '';
+            document.getElementById('pType').value = '';
+            base64Image = "";
         }
     }
 
-    function saveToLocal() { localStorage.setItem('myPetsV2', JSON.stringify(pets)); }
     function closeModal() { document.getElementById('modal').style.display = 'none'; }
-    function resetModal() {
-        document.getElementById('pName').value = '';
-        document.getElementById('pType').value = '';
-        document.getElementById('pImgInput').value = '';
-        document.getElementById('pImgPreview').style.display = 'none';
-        base64Image = "";
-        document.getElementById('modalTitle').innerText = '家族を登録';
-        document.getElementById('delBtn').style.display = 'none';
-    }
+    function showLoading(show) { document.getElementById('loading').style.display = show ? 'flex' : 'none'; }
 
     updateHeader();
-    render();
+    fetchData();
 </script>
 </body>
 </html>
