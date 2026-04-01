@@ -224,7 +224,8 @@
     }
 
     function openModal(i = null) {
-        editIndex = i; document.getElementById('modal').style.display = 'flex';
+        editIndex = i; 
+        document.getElementById('modal').style.display = 'flex';
         const preview = document.getElementById('pImgPreview');
         
         if (i !== null) {
@@ -233,7 +234,33 @@
             document.getElementById('pSex').value = p.sex;
             document.getElementById('pType').value = p.type;
             base64Image = p.img;
-            if(base64Image) { preview.src = base64Image; preview.style.display = "block"; } else { preview.style.display = "none"; }
+            if(base64Image) { 
+                preview.src = base64Image; 
+                preview.style.display = "block"; 
+            } else { 
+                preview.style.display = "none"; 
+            }
             document.getElementById('modalTitle').innerText = 'お名前を編集';
         } else {
-            document.getElementById('p
+            document.getElementById('pName').value = '';
+            document.getElementById('pType').value = '';
+            document.getElementById('pImgInput').value = '';
+            base64Image = "";
+            preview.style.display = "none";
+            document.getElementById('modalTitle').innerText = '家族を登録';
+        }
+    }
+
+    function closeModal() { 
+        document.getElementById('modal').style.display = 'none'; 
+    }
+
+    function showLoading(show) { 
+        document.getElementById('loading').style.display = show ? 'flex' : 'none'; 
+    }
+
+    updateHeader();
+    fetchData();
+</script>
+</body>
+</html>
